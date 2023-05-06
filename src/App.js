@@ -10,17 +10,40 @@ import "tachyons";
 
 function App() {
   const [input, setInput] = useState("");
+  const [imgURL, setImgURL] = useState("");
+  const [box, setBox] = useState([]);
+
+  function calculateFaceLocation(data, index) {
+    const clarifaiFace = data.region_info.bounding_box;
+
+    const image = document.getElementById("inputimage");
+    const width = Number(image.width);
+    const height = Number(image.height);
+    console.table(width, height);
+    return {
+      leftCol: clarifaiFace.left_col * width,
+      topRow: clarifaiFace.top_row * height,
+      rightCol: width - clarifaiFace.right_col * width,
+      bottomRow: height - clarifaiFace.bottom_row * height,
+    };
+  }
+
+  function displayFaceBox(data) {
+    setBox((box) => [...box, data]);
+  }
 
   function onInputChange(event) {
-    console.log(event.target.value);
     setInput(event.target.value);
+    setBox([]);
   }
 
   function onSubmit(event) {
-    console.log("click");
-
+    console.log(box);
+    console.log("submit");
+    setBox([]);
+    setImgURL(input);
     // URL of image to use. Change this to your image.
-    const IMAGE_URL = input;
+    const IMAGE_URL = imgURL;
 
     const raw = JSON.stringify({
       user_app_id: {
@@ -52,12 +75,18 @@ function App() {
     // this will default to the latest version_id
 
     fetch(
-      `https://api.clarifai.com/v2/models/face-detection/versions/6dc7e46bc9124c5c8824be4822abe105/outputs`,
+      `https://api.clarifai.com/v2/models/face-detection/outputs`,
       requestOptions
     )
-      .then((response) => response.json())
-      .then((result) => result.parse())
-      .then((result) => console.log(result))
+      .then((response) => response.text())
+      .then((result) => JSON.parse(result))
+      .then((result) => {
+        // console.log(result.outputs[0].data.regions);
+        // console.log("input:");
+        result.outputs[0].data.regions.forEach((data, index) =>
+          displayFaceBox(calculateFaceLocation(data, index))
+        );
+      })
       .catch((error) => console.log("error", error));
   }
 
@@ -68,7 +97,7 @@ function App() {
       <Logo />
       <Rank />
       <ImageLinkForm InputChange={onInputChange} onSubmit={onSubmit} />
-      <FaceRecognition URL={input} />
+      <FaceRecognition URL={imgURL} box={box} />
     </div>
   );
 }

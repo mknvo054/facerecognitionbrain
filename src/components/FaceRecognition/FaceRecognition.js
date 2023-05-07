@@ -1,7 +1,6 @@
 import "./FaceRecognition.css";
 
 function FaceRecognition({ URL, box }) {
-  console.log("box: " + box.length);
   return (
     <div className="center">
       <div className="absolute">

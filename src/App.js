@@ -10,7 +10,6 @@ import "tachyons";
 
 function App() {
   const [input, setInput] = useState("");
-  const [imgURL, setImgURL] = useState("");
   const [box, setBox] = useState([]);
 
   function calculateFaceLocation(data, index) {
@@ -19,7 +18,6 @@ function App() {
     const image = document.getElementById("inputimage");
     const width = Number(image.width);
     const height = Number(image.height);
-    console.table(width, height);
     return {
       leftCol: clarifaiFace.left_col * width,
       topRow: clarifaiFace.top_row * height,
@@ -38,12 +36,8 @@ function App() {
   }
 
   function onSubmit(event) {
-    console.log(box);
-    console.log("submit");
-    setBox([]);
-    setImgURL(input);
     // URL of image to use. Change this to your image.
-    const IMAGE_URL = imgURL;
+    const IMAGE_URL = input;
 
     const raw = JSON.stringify({
       user_app_id: {
@@ -97,7 +91,7 @@ function App() {
       <Logo />
       <Rank />
       <ImageLinkForm InputChange={onInputChange} onSubmit={onSubmit} />
-      <FaceRecognition URL={imgURL} box={box} />
+      <FaceRecognition URL={input} box={box} />
     </div>
   );
 }

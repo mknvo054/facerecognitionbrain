@@ -3,6 +3,8 @@ import Logo from "./components/Logo/Logo";
 import ImageLinkForm from "./components/ImageLinkForm/ImageLinkForm";
 import Rank from "./components/Rank/Rank";
 import FaceRecognition from "./components/FaceRecognition/FaceRecognition";
+import SignIn from "./components/SignIn/SignIn";
+import Register from "./components/Register/Register";
 import ParticlesBg from "particles-bg";
 import { useState } from "react";
 import "./App.css";
@@ -11,6 +13,8 @@ import "tachyons";
 function App() {
   const [input, setInput] = useState("");
   const [box, setBox] = useState([]);
+  const [route, setRoute] = useState("signin");
+  const [isSignedIn, setIsSignedIn] = useState("false");
 
   function calculateFaceLocation(data, index) {
     const clarifaiFace = data.region_info.bounding_box;
@@ -33,6 +37,12 @@ function App() {
   function onInputChange(event) {
     setInput(event.target.value);
     setBox([]);
+  }
+
+  function onRouteChange(route) {
+    if (route === "home") setIsSignedIn(true);
+    else setIsSignedIn(false);
+    setRoute(route);
   }
 
   function onSubmit(event) {
@@ -87,11 +97,19 @@ function App() {
   return (
     <div className="App">
       <ParticlesBg type="cobweb" bg={true} />
-      <Navigation />
-      <Logo />
-      <Rank />
-      <ImageLinkForm InputChange={onInputChange} onSubmit={onSubmit} />
-      <FaceRecognition URL={input} box={box} />
+      <Navigation onRouteChange={onRouteChange} isSignedIn={isSignedIn} />
+      {route === "signin" ? (
+        <SignIn onRouteChange={onRouteChange} />
+      ) : route === "register" ? (
+        <Register onRouteChange={onRouteChange} />
+      ) : (
+        <div>
+          <Logo />
+          <Rank />
+          <ImageLinkForm InputChange={onInputChange} onSubmit={onSubmit} />
+          <FaceRecognition URL={input} box={box} />
+        </div>
+      )}
     </div>
   );
 }

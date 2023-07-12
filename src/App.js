@@ -7,6 +7,7 @@ import SignIn from "./components/SignIn/SignIn";
 import Register from "./components/Register/Register";
 import ParticlesBg from "particles-bg";
 import { useState } from "react";
+import { useEffect } from "react";
 import "./App.css";
 import "tachyons";
 
@@ -15,6 +16,12 @@ function App() {
   const [box, setBox] = useState([]);
   const [route, setRoute] = useState("signin");
   const [isSignedIn, setIsSignedIn] = useState("false");
+
+  useEffect(() => {
+    fetch("http://localhost:3000/")
+      .then((res) => res.json())
+      .then(console.log);
+  }, []);
 
   function calculateFaceLocation(data, index) {
     const clarifaiFace = data.region_info.bounding_box;

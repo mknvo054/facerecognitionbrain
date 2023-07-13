@@ -1,28 +1,43 @@
 import { useState } from "react";
 
 function SignIn({ onRouteChange }) {
+  const [signInPassword, setSignInPassword] = useState();
+  const [signInEmail, setSignInEmail] = useState();
   const [userData, setUserData] = useState({
-    signInEmail: "",
-    signInPassword: "",
+    userEmail: "",
+    userPassword: "",
   });
 
   function onEmailChange(event) {
-    setUserData((prev) => ({ ...prev, signInEmail: event.target.value }));
+    setSignInEmail(event.target.value);
   }
 
   function onPasswordChange(event) {
-    setUserData((prev) => ({ ...prev, signInPassword: event.target.value }));
+    setSignInPassword(event.target.value);
   }
 
   function onSubmitSignIn() {
-    console.log(userData);
-    onRouteChange("home");
+    fetch("http://localhost:3000/signin", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: signInEmail,
+        password: signInPassword,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data === "success") {
+          console.log(data);
+          onRouteChange("home");
+        }
+      });
   }
 
   return (
     <article className="br2 ba dark-gray b--black-10 mv4 w-100 w-50-m w-25-l mw6 shadow-3 center">
       <main className="pa4 black-80 center">
-        <form className="measure">
+        <div className="measure">
           <fieldset id="sign_up" className="ba b--transparent ph0 mh0">
             <legend className="f4 fw6 ph0 mh0">Sign In</legend>
             <div className="mt3">
@@ -72,7 +87,7 @@ function SignIn({ onRouteChange }) {
               Forgot your password?
             </a> */}
           </div>
-        </form>
+        </div>
       </main>
     </article>
   );
